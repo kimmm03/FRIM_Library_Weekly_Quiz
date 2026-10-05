@@ -41,7 +41,7 @@ body {
     width: 100%;
     max-width: 500px;
 
-    background: rgba(255, 255, 255, 0.88);
+    background: rgba(255, 255, 255, 0.82);
 
     border-radius: 10px;
 
@@ -202,10 +202,11 @@ body {
 @media (max-width: 600px) {
 
     body {
-        padding: 15px 10px;
+        padding: 25px 15px;
     }
 
     .quiz-container {
+        max-width: 92%;
         padding: 20px 18px 25px;
     }
 
@@ -454,7 +455,7 @@ body {
 }
 
 
-/* ---------- FReD ---------- */
+/* ---------- FRED ---------- */
 
 .result-page .fred-section {
     margin-top: 18px;
