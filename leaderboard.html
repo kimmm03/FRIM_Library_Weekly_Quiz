@@ -1,0 +1,639 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard | FRIM Library Weekly Quiz</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .leaderboard-container {
+            width: 90%;
+            max-width: 850px;
+            margin: 40px auto;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 16px;
+            box-sizing: border-box;
+        }
+
+        .leaderboard-container h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .leaderboard-description {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .week-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 25px 0;
+        }
+
+        .week-selector label {
+            font-weight: bold;
+        }
+
+        .week-selector select {
+            padding: 10px 14px;
+            border: 1px solid #cbd5c0;
+            border-radius: 8px;
+            font: inherit;
+            background: white;
+            cursor: pointer;
+        }
+
+        .leaderboard-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 13px 12px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .leaderboard-table th {
+            background-color: #e8f3e5;
+            color: #24452b;
+        }
+
+        .leaderboard-table tbody tr:hover {
+            background-color: #f5f9f3;
+        }
+
+        .leaderboard-table td:nth-child(2) {
+            text-align: left;
+        }
+
+        .leaderboard-status {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .leaderboard-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .leaderboard-button {
+            display: inline-block;
+            padding: 12px 22px;
+            border: none;
+            border-radius: 8px;
+            background-color: #819747;
+            color: white;
+            text-decoration: none;
+            font: inherit;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .leaderboard-button:hover {
+            background-color: #6d803b;
+        }
+
+        .leaderboard-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .empty-message {
+            text-align: center !important;
+            padding: 25px !important;
+        }
+
+        @media (max-width: 600px) {
+            .leaderboard-container {
+                width: 94%;
+                padding: 15px;
+                margin: 20px auto;
+            }
+
+            .leaderboard-table th,
+            .leaderboard-table td {
+                padding: 10px 8px;
+                font-size: 14px;
+            }
+        }
+
+        
+.podium-section {
+    margin: 30px 0;
+}
+
+.podium-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.podium-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: end;
+    gap: 12px;
+}
+
+.podium-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    text-align: center;
+    padding: 16px 8px;
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+}
+
+.podium-first {
+    min-height: 165px;
+    background: #fff1c2;
+    border: 2px solid #e3b341;
+}
+
+.podium-second {
+    min-height: 135px;
+    background: #e8edf3;
+    border: 2px solid #b9c4d0;
+}
+
+.podium-third {
+    min-height: 115px;
+    background: #f7e3d5;
+    border: 2px solid #d8a17d;
+}
+
+.podium-medal {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.podium-name {
+    font-weight: bold;
+    margin: 6px 0;
+}
+
+.podium-score,
+.podium-time {
+    font-size: 13px;
+    margin: 3px 0;
+}
+
+@media (max-width: 480px) {
+    .podium-container {
+        gap: 6px;
+    }
+
+    .podium-card {
+        padding: 12px 4px;
+    }
+
+    .podium-name {
+        font-size: 13px;
+    }
+
+    .podium-score,
+    .podium-time {
+        font-size: 11px;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+
+    <main class="leaderboard-container">
+
+        <h1>🏆 Leaderboard</h1>
+
+        <p class="leaderboard-description">
+            FRIM Library Weekly Quiz
+        </p>
+
+        <div class="week-selector">
+            <label for="week-select">Select Week:</label>
+
+            <select id="week-select">
+                <option value="WEEK_01">Week 01</option>
+                <option value="WEEK_02">Week 02</option>
+                <option value="WEEK_03">Week 03</option>
+            </select>
+        </div>
+
+            <section id="podium-section" class="podium-section">
+            <h2>🏆 Top 3 Players</h2>
+            <div id="podium-container" class="podium-container"></div>
+        </section>
+        <div class="leaderboard-table-wrapper">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Nickname</th>
+                        <th>Score</th>
+                        <th>Time Taken</th>
+                    </tr>
+                </thead>
+
+                <tbody id="leaderboard-body">
+                    <tr>
+                        <td colspan="3" class="empty-message">
+                            Loading leaderboard...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p
+            id="leaderboard-status"
+            class="leaderboard-status"
+            role="status"
+            aria-live="polite">
+        </p>
+
+        <div class="leaderboard-actions">
+
+            <button
+                type="button"
+                id="refresh-button"
+                class="leaderboard-button">
+                Refresh Leaderboard
+            </button>
+
+            <a
+                href="intro.html"
+                class="leaderboard-button">
+                Return to Home
+            </a>
+
+        </div>
+
+    </main>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbzK6Ms0EAsJMfjKjIwOlm5g_ApmVDVEaGuFbOHThF4eKvBxEcfvvqzSgwm5VGPGOC5aAw/exec";
+
+        const leaderboardBody =
+            document.getElementById("leaderboard-body");
+
+        const statusMessage =
+            document.getElementById("leaderboard-status");
+
+        const refreshButton =
+            document.getElementById("refresh-button");
+
+        const weekSelect =
+            document.getElementById("week-select");
+
+        let requestTimeout;
+
+        function loadLeaderboard() {
+            clearTimeout(requestTimeout);
+
+            refreshButton.disabled = true;
+
+            statusMessage.textContent =
+                "Loading latest scores...";
+
+            leaderboardBody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="empty-message">
+                        Loading leaderboard...
+                    </td>
+                </tr>
+            `;
+
+            const oldScript =
+                document.getElementById("leaderboard-script");
+
+            if (oldScript) {
+                oldScript.remove();
+            }
+
+            if (window.handleFrimLeaderboard) {
+                delete window.handleFrimLeaderboard;
+            }
+
+            let finished = false;
+
+            function finishRequest() {
+                if (finished) return;
+
+                finished = true;
+                clearTimeout(requestTimeout);
+                refreshButton.disabled = false;
+            }
+
+            function showError(message) {
+                finishRequest();
+
+                leaderboardBody.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="empty-message">
+                            Leaderboard unavailable.
+                        </td>
+                    </tr>
+                `;
+
+                statusMessage.textContent = message;
+            }
+
+            window.handleFrimLeaderboard = function(result) {
+                finishRequest();
+
+                if (!result || result.success !== true) {
+                    showError(
+                        "Unable to load leaderboard data."
+                    );
+                    return;
+                }
+
+                const selectedWeek = weekSelect.value;
+
+
+                
+                const bestScores = new Map();
+
+                (result.leaderboard || [])
+                    .filter(player =>
+                        player.week === selectedWeek &&
+                        Number.isFinite(Number(player.score))
+                    )
+                    .forEach(player => {
+                        const nickname = String(player.nickname || "Player").trim();
+                        const key = nickname.toLowerCase();
+                        const score = Number(player.score);
+
+                        const timeTaken =
+                            player.timeTaken !== null &&
+                            player.timeTaken !== undefined &&
+                            player.timeTaken !== "" &&
+                            Number.isFinite(Number(player.timeTaken)) &&
+                            Number(player.timeTaken) >= 0
+                                ? Number(player.timeTaken)
+                                : null;
+
+                        const existing = bestScores.get(key);
+
+                        const isBetterScore =
+                            !existing || score > existing.score;
+
+                        const isSameScoreFaster =
+                            existing &&
+                            score === existing.score &&
+                            timeTaken !== null &&
+                            (
+                                existing.timeTaken === null ||
+                                timeTaken < existing.timeTaken
+                            );
+
+                        if (isBetterScore || isSameScoreFaster) {
+                            bestScores.set(key, {
+                                nickname: nickname,
+                                week: player.week,
+                                score: score,
+                                maxScore: Number(player.maxScore) || 30,
+                                timeTaken: timeTaken
+                            });
+                        }
+                    });
+
+                const players = Array.from(bestScores.values())
+                    .sort((a, b) => {
+                        if (b.score !== a.score) {
+                            return b.score - a.score;
+                        }
+
+                        if (a.timeTaken !== null && b.timeTaken !== null) {
+                            return a.timeTaken - b.timeTaken;
+                        }
+
+                        if (a.timeTaken !== null) return -1;
+                        if (b.timeTaken !== null) return 1;
+
+                        return 0;
+                    })
+                    .slice(0, 100);
+
+                leaderboardBody.innerHTML = "";
+
+                
+                const podiumContainer =
+                    document.getElementById("podium-container");
+
+                podiumContainer.innerHTML = "";
+
+                const topThree = players.slice(0, 3);
+
+                // Display second, first, then third for podium layout
+                const podiumOrder = [
+                    { player: topThree[1], rank: 2, className: "podium-second", medal: "🥈" },
+                    { player: topThree[0], rank: 1, className: "podium-first", medal: "🥇" },
+                    { player: topThree[2], rank: 3, className: "podium-third", medal: "🥉" }
+                ];
+
+                podiumOrder.forEach(item => {
+                    if (!item.player) return;
+
+                    const card = document.createElement("div");
+                    card.className = `podium-card ${item.className}`;
+
+                    const medal = document.createElement("div");
+                    medal.className = "podium-medal";
+                    medal.textContent = item.medal;
+
+                    const rank = document.createElement("strong");
+                    rank.textContent = `Rank ${item.rank}`;
+
+                    const name = document.createElement("div");
+                    name.className = "podium-name";
+                    name.textContent = item.player.nickname;
+
+                    const score = document.createElement("div");
+                    score.className = "podium-score";
+                    score.textContent =
+                        `${item.player.score} / ${item.player.maxScore}`;
+
+                    const time = document.createElement("div");
+                    time.className = "podium-time";
+
+                    if (item.player.timeTaken !== null) {
+                        const minutes = Math.floor(item.player.timeTaken / 60);
+                        const seconds = item.player.timeTaken % 60;
+
+                        time.textContent =
+                            `⏱ ${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+                    } else {
+                        time.textContent = "⏱ —";
+                    }
+
+                    card.append(medal, rank, name, score, time);
+                    podiumContainer.appendChild(card);
+                });
+
+                if (players.length === 0) {
+                    leaderboardBody.innerHTML = `
+                        <tr>
+                            <td colspan="3" class="empty-message">
+                                No scores submitted for this week yet.
+                            </td>
+                        </tr>
+                    `;
+
+                    statusMessage.textContent =
+                        "Be the first to complete this weekly quiz!";
+
+                    return;
+                }
+
+                players.forEach((player, index) => {
+                    const row = document.createElement("tr");
+
+                    const rankCell =
+                        document.createElement("td");
+
+                    const nicknameCell =
+                        document.createElement("td");
+
+                    const scoreCell =
+                        document.createElement("td");
+
+                    const timeCell =
+                        document.createElement("td");
+
+
+                    const previousPlayer = players[index - 1];
+
+                    let rank;
+
+                    if (
+                        index > 0 &&
+                        Number(previousPlayer.score) === Number(player.score) &&
+                        previousPlayer.timeTaken === player.timeTaken
+                    ) {
+                        rank = previousPlayer.rank;
+                    } else {
+                        rank = index + 1;
+                    }
+
+                    player.rank = rank;
+
+                    if (rank === 1) {
+                        rankCell.textContent = "🥇 1";
+                    } else if (rank === 2) {
+                        rankCell.textContent = "🥈 2";
+                    } else if (rank === 3) {
+                        rankCell.textContent = "🥉 3";
+                    } else {
+                        rankCell.textContent = String(rank);
+                    }
+
+                    nicknameCell.textContent =
+                        String(player.nickname || "Player");
+
+
+                    scoreCell.textContent =
+                        `${Number(player.score)} / ${Number(player.maxScore) || 30}`;
+
+                    if (player.timeTaken !== null) {
+                        const minutes = Math.floor(player.timeTaken / 60);
+                        const seconds = player.timeTaken % 60;
+
+                        timeCell.textContent =
+                            `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+                    } else {
+                        timeCell.textContent = "—";
+                    }
+
+                        row.appendChild(rankCell);
+                        row.appendChild(nicknameCell);
+                        row.appendChild(scoreCell);
+                        row.appendChild(timeCell);
+
+                    leaderboardBody.appendChild(row);
+                });
+
+                statusMessage.textContent =
+                    `Showing ${players.length} result(s) for ${selectedWeek.replace("_", " ")}.`;
+            };
+
+            const script = document.createElement("script");
+
+            script.id = "leaderboard-script";
+
+            const callbackName =
+                "handleFrimLeaderboard";
+
+            script.src =
+                API_URL +
+                "?action=leaderboard" +
+                "&week=" + encodeURIComponent(weekSelect.value) +
+                "&callback=" + callbackName +
+                "&t=" + Date.now();
+
+            script.onerror = function() {
+                showError(
+                    "Connection failed. Please check your Apps Script URL and deployment."
+                );
+            };
+
+            requestTimeout = setTimeout(function() {
+                showError(
+                    "The request timed out. Please try again."
+                );
+
+                script.remove();
+            }, 15000);
+
+            document.body.appendChild(script);
+        }
+
+        refreshButton.addEventListener(
+            "click",
+            loadLeaderboard
+        );
+
+        weekSelect.addEventListener(
+            "change",
+            loadLeaderboard
+        );
+
+        if (API_URL === "https://script.google.com/macros/s/AKfycbzK6Ms0EAsJMfjKjIwOlm5g_ApmVDVEaGuFbOHThF4eKvBxEcfvvqzSgwm5VGPGOC5aAw/exec") {
+            leaderboardBody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="empty-message">
+                        Apps Script URL has not been configured.
+                    </td>
+                </tr>
+            `;
+
+            statusMessage.textContent =
+                "Add your deployed Apps Script Web App URL to the code.";
+        } else {
+            loadLeaderboard();
+        }
+    </script>
+<script src="js/button_sound.js"></script>
+</body>
+</html>
