@@ -619,20 +619,24 @@
             loadLeaderboard
         );
 
-        if (API_URL === "https://script.google.com/macros/s/AKfycbzK6Ms0EAsJMfjKjIwOlm5g_ApmVDVEaGuFbOHThF4eKvBxEcfvvqzSgwm5VGPGOC5aAw/exec") {
-            leaderboardBody.innerHTML = `
-                <tr>
-                    <td colspan="3" class="empty-message">
-                        Apps Script URL has not been configured.
-                    </td>
-                </tr>
-            `;
+        // if (API_URL === "https://script.google.com/macros/s/AKfycbzK6Ms0EAsJMfjKjIwOlm5g_ApmVDVEaGuFbOHThF4eKvBxEcfvvqzSgwm5VGPGOC5aAw/exec") {
+        //     leaderboardBody.innerHTML = `
+        //         <tr>
+        //             <td colspan="3" class="empty-message">
+        //                 Apps Script URL has not been configured.
+        //             </td>
+        //         </tr>
+        //     `;
 
-            statusMessage.textContent =
-                "Add your deployed Apps Script Web App URL to the code.";
-        } else {
-            loadLeaderboard();
-        }
+        //     statusMessage.textContent =
+        //         "Add your deployed Apps Script Web App URL to the code.";
+        // } else {
+        //     loadLeaderboard();
+        // }
+
+        
+        loadLeaderboard();
+
     </script>
 <script src="js/button_sound.js"></script>
 </body>
